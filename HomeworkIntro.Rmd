@@ -9,3 +9,22 @@ install.packages("tidyverse")
 ```{r}
 library(tidyverse)
 ```
+```{r}
+# load the data set
+GermanCredit <- read_csv(file.path("Data", "GermanCredit_modified_SP19_001.csv"))
+```
+
+```{r}
+# Split data into train and test
+ set.seed(737900)
+
+# set an index to split the data set  
+# 
+# Create the train data frame
+# trainDF <- 
+# 
+# Create the test data frame  
+# testDF <- 
+# 
+```
+
