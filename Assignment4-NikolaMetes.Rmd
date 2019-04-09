@@ -1,0 +1,157 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r,include=FALSE}
+install.packages("tidyverse")
+install.packages("car")
+```
+```{r}
+library(tidyverse)
+library(car)
+```
+```{r}
+# load the data set
+GermanCredit <- read_csv(file.path("Data", "GermanCredit_modified_SP19_001.csv")) %>% 
+  mutate(good=if_else(Class=="Good",1,0)) %>% 
+  select(-Class)
+```
+
+```{r}
+# Split data into train and test
+ set.seed(737900)
+
+# set an index to split the data set  
+# 
+# Create the train data frame
+s <- sample(nrow(GermanCredit), replace=FALSE, size = .8*nrow(GermanCredit)) 
+trainDF <- GermanCredit[s,]
+# 
+# Create the test data frame  
+testDF <- GermanCredit[-s,]
+# 
+```
+2 Fit a logistic regression model in R
+Fit a logistic regression model to predict the Class variable using all of the predictors in trainDF and assign the fitted model to the object logit.fit1.
+
+MISSING CODE
+
+```{r}
+str(GermanCredit)
+trainDF %>% select(Class) %>% table()
+```
+
+```{r}
+logit.fit1 <- glm(good~.,family=binomial,data=trainDF)
+Anova(logit.fit1)
+```
+
+
+```{r}
+logit.fit1 <- trainDF %>% 
+  select(-ResidenceDuration) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- trainDF %>% 
+  select(-ResidenceDuration,-Age) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+  
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, - Age, -Job.Type, -NumberPeopleMaintenance) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits, -Other.Debtors) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits, -Other.Debtors, -Property) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits, -Other.Debtors, -Property, -Credit.History) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits, -Other.Debtors, -Property, -Credit.History, -Savings) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits, -Other.Debtors, -Property, -Credit.History, -Savings, -Amount) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+```{r}
+logit.fit1 <- testDF %>% 
+  select (-ResidenceDuration, -Age, -Job.Type, -NumberPeopleMaintenance, -Telephone, -NumberExistingCredits, -Other.Debtors, -Property, -Credit.History, -Savings, -Amount, -Personal.Status) %>% 
+  glm(good~.,family=binomial,data=.)
+Anova(logit.fit1)
+```
+# a. Comment on the model’s Residual deviance as compared to both the degrees of freedom and the Null deviance. Is this a “good” model for the prediction of Class based on these statistics alone?
+Residual deviance is less than the Null deviance. Siginificant decrease in the null deviance. The p value is 5.606281e-11. The model is yes, since the p value is close to zero.
+
+```{r}
+summary(logit.fit1)
+```
+```{r}
+253.67-159.08
+```
+```{r}
+pchisq(94.59,df=199-177,lower.tail = FALSE)
+```
+
+# b. Which of the coefficients are most significant?
+Duration, Checking, Employment.Duration
+Duration - for every increase in one unit of Duration, the odds of Good decrease proportionally by a multiplying the number by 0.9418022. 
+Checking - everything is in reference to Checking 0.to.200 group.
+```{r}
+exp(-0.05996)
+```
+```{r}
+table(GermanCredit$Checking)
+```
+```{r}
+0.93248, -1.32789, 0.80624
+```
+
+
+#c. Interpret, in plain english, the Duration and Amount coefficients. How do they effect our prediction of the Class variable.
+The Amount has been removed and has noe effect on the model.
+
+#d. Interpret, in plain english, the Intercept coefficient of this model. Remember that the Intercept in logistic regression is subject to the same interpretation of factor variables as linear regression.
