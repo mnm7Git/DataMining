@@ -1,0 +1,65 @@
+---
+title: "Assignment 5 - Nikola Metes"
+output: html_notebook
+---
+
+```{r}
+install.packages("rpart")
+install.packages("rpart.plot")
+```
+
+```{r,include=FALSE}
+library(rpart)
+library(rpart.plot)
+library(tidyverse)
+```
+
+# 1 Load the Assignment data
+```{r}
+# load the data set
+GermanCredit <- read_csv(file.path("Data", "GermanCredit_modified_SP19_001.csv"))
+```
+
+```{r}
+# Split data into train and test
+ set.seed(737900)
+
+# set an index to split the data set  
+# 
+# Create the train data frame
+s <- sample(nrow(GermanCredit), replace=FALSE, size = .8*nrow(GermanCredit)) 
+trainDF <- GermanCredit[s,]
+# 
+# Create the test data frame  
+testDF <- GermanCredit[-s,]
+# 
+```
+
+
+# 2.1 Build an Initial Classification Tree
+```{r}
+tree.1 <- rpart(formula=Class~.,data=trainDF,
+                control=rpart.control(cp=0,minsplit=30,xval=10))
+```
+#Plot the fitted tree.1.
+```{r}
+pdf("treeplot.pdf")
+rpart.plot(tree.1, box.palette="RdBu", shadow.col="gray", nn=TRUE)
+dev.off()
+```
+
+# Describe in your own words, the root node for this decision tree.
+The first split between Checking from 0 to 200, or is less than 0. 
+The two levels 0. to 200. and None were split to the left and the
+
+# What does it mean?
+The split checking 0 to 200 has a slightly higher proportion than those who have checking
+
+# What percent of cases in the training set are accurately identified as “Good” credit by this single decision node alone?
+If it is Yes then it goes to a 54% Good, if it is No then it goes to a 46% Good.
+
+# How many internal nodes (not including the root node) are there in this tree?
+not counting the leafs, there are 17 nodes
+
+# How many leaf nodes?
+19 leaf nodes

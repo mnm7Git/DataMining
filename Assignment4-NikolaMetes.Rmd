@@ -1,5 +1,5 @@
 ---
-title: "Assignment 4 - Nikola Metes"
+title: "Assignment  - Nikola Metes"
 output: html_notebook
 ---
 
@@ -52,7 +52,7 @@ Anova(logit.fit1)
 ```
 
 # a. Comment on the model’s Residual deviance as compared to both the degrees of freedom and the Null deviance. Is this a “good” model for the prediction of Class based on these statistics alone?
-Residual deviance is less than the Null deviance. Siginificant decrease in the null deviance. The p value is 5.606281e-11. The model is yes, since the p value is close to zero.
+Residual deviance is less than the Null deviance. We can see a siginificant decrease in the Null deviance. The p value is 5.606281e-11. The model is yes, since the p value is close to zero.
 
 ```{r}
 summary(logit.fit1)
@@ -65,7 +65,7 @@ pchisq(94.59,df=199-177,lower.tail = FALSE)
 ```
 
 # b. Which of the coefficients are most significant?
-Duration, Checking, Employment.Duration
+Duration, Checking, Employment.
 Duration - for every increase in one unit of Duration, the odds of Good decrease proportionally by a multiplying the number by 0.9418022. 
 Checking - everything is in reference to Checking 0.to.200 group.
 ```{r}
@@ -78,10 +78,10 @@ coefficients
 0.93248, -1.32789, 0.80624 
 
 #c. Interpret, in plain english, the Duration and Amount coefficients. How do they effect our prediction of the Class variable.
-The Amount has been removed and has noe effect on the model.
+The Amount has been removed and has no effect on the model.
 
 #d. Interpret, in plain english, the Intercept coefficient of this model. Remember that the Intercept in logistic regression is subject to the same interpretation of factor variables as linear regression.
-when all the continuous variables are zero and the factor variables are their reference then the predicted log odds (4.496e+00) is the intercept.
+when all the continuous variables are zero and the factor variables are their reference, then the predicted log odds (4.496e+00) is the intercept.
 
 
 # 3.1 Confusion Matrix: Train
@@ -107,7 +107,7 @@ round(prop.table(table(actual, predicted),1),2)
 ```
 
 #a. What is the specificity and sensitivity of this model on the train data set?
-seinsitivity - ability to detect an outcome
+Sensitivity - ability to detect an outcome
 specificity - ability to detect when there is not an ability to detect and outcome (ie an accident) can't differentiate between if somebody has it or not; how many NO items are we going to guess correctly
 
 #b. Is this a good model at a .5 threshold? HINT: Do you think this institution would rather accurately predict cases of Good credit or cases of Bad credit?
