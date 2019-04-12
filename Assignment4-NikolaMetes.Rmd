@@ -1,12 +1,17 @@
 ---
-title: "Assignment  - Nikola Metes"
-output: html_notebook
+title: 'Assignment #4  - Nikola Metes'
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
 ---
 
 ```{r,include=FALSE}
 install.packages("tidyverse")
 install.packages("car")
 install.packages("pROC")
+installed.packages("contrib.url")
 ```
 ```{r}
 library(tidyverse)
@@ -51,37 +56,39 @@ logit.fit1 <- glm(good~.,family=binomial,data=trainDF)
 Anova(logit.fit1)
 ```
 
-# a. Comment on the model’s Residual deviance as compared to both the degrees of freedom and the Null deviance. Is this a “good” model for the prediction of Class based on these statistics alone?
-Residual deviance is less than the Null deviance. We can see a siginificant decrease in the Null deviance. The p value is 5.606281e-11. The model is yes, since the p value is close to zero.
-
 ```{r}
 summary(logit.fit1)
 ```
 ```{r}
-253.67-159.08
+967-704.44
 ```
 ```{r}
-pchisq(94.59,df=199-177,lower.tail = FALSE)
+pchisq(262.56,df=799-751,lower.tail = FALSE)
 ```
+# a. Comment on the model’s Residual deviance as compared to both the degrees of freedom and the Null deviance. Is this a “good” model for the prediction of Class based on these statistics alone?
+Residual deviance is less than the Null deviance. We can see a siginificant decrease in the Null deviance. The p value is 2.369794e-31. The model is yes, since the p value is close to zero.
 
 # b. Which of the coefficients are most significant?
-Duration, Checking, Employment.
-Duration - for every increase in one unit of Duration, the odds of Good decrease proportionally by a multiplying the number by 0.9418022. 
-Checking - everything is in reference to Checking 0.to.200 group.
+The coefficients marked with (***) are most significant:
+CheckingNone
+Credit.HistoryPaidDuly
+Credit.HistoryThisBank.AllPaid
+
 ```{r}
-exp(-0.05996)
+table(GermanCredit$Credit.History)
 ```
+
 ```{r}
 table(GermanCredit$Checking)
 ```
-coefficients
-0.93248, -1.32789, 0.80624 
 
 #c. Interpret, in plain english, the Duration and Amount coefficients. How do they effect our prediction of the Class variable.
-The Amount has been removed and has no effect on the model.
+For every increase in one unit of Duration, the outcome of Good (Class) is multiplied by -2.786e-02.
+For every increase in one unit of Amount, the outcome of Good (Class) is multiplied by -1.089e-04.
+Both coeficients decrease the prediction of the Class variable.
 
 #d. Interpret, in plain english, the Intercept coefficient of this model. Remember that the Intercept in logistic regression is subject to the same interpretation of factor variables as linear regression.
-when all the continuous variables are zero and the factor variables are their reference, then the predicted log odds (4.496e+00) is the intercept.
+When all the continuous variables are zero and the factor variables are their reference, then the predicted log odds (4.496e+00) is the intercept.
 
 
 # 3.1 Confusion Matrix: Train
@@ -97,7 +104,6 @@ actual <- trainDF$good
 predicted <- factor(log.50, levels = c(0,1), labels = c("Bad", "Good"))
 ```
 
-
 ```{r}
 # Print the confusion matrix
 table(actual, predicted)   
@@ -107,11 +113,11 @@ round(prop.table(table(actual, predicted),1),2)
 ```
 
 #a. What is the specificity and sensitivity of this model on the train data set?
-Sensitivity - ability to detect an outcome
-specificity - ability to detect when there is not an ability to detect and outcome (ie an accident) can't differentiate between if somebody has it or not; how many NO items are we going to guess correctly
+Sensitivity - ability to detect an outcome. In this case that would be to which degree we can predict Good.
+Specificity - ability to detect when there is not an ability to detect and outcome (i.e. a car accident) can't differentiate between if somebody has it or not, or how many NO items are we going to guess correctly.
 
 #b. Is this a good model at a .5 threshold? HINT: Do you think this institution would rather accurately predict cases of Good credit or cases of Bad credit?
-they may want to vary that threshold number
+They may want to vary that threshold number in order to see if the predicition of Good/Bad credit changes. Given that this model estimates the Good outcome fairly strongly, the threshold could be lowered as our degree of predicition will most likely not change much.
 
 ```{r}
 plot(roc(trainDF$good, logit.fit1$fitted.values))
@@ -123,22 +129,16 @@ auc(trainDF$good, logit.fit1$fitted.values)
 ```
 ## Area under the curve: 0.8372
 # a. What does the above output from the ROC curve tell you about this model?
-if you can pair two people and person 1 scores higher on the model than person 2, they should both be rated as the same and/or person 1 should be rated as good
-
-if somebody scores higher on the model, they should be good
-if it is opposite then it is negative
+If you can pair two people and personA scores higher on the model than personB, they should both be rated as the same and/or personA should be rated as good. If it opposite then it would be negativ and personA should be rated as Bad.
 
 # b. Does this change your interpretation of this being a good model?
-the enlarged area under the ROC curve indicates that the mdodel is good. 0.83 is pretty good
-
-
+The enlarged area under the ROC curve indicates that the mdodel is good since 0.83 is a pretty good result.
 
 # 4.1 Confusion Matrix: Test
 ```{r}
 log.test <- predict(logit.fit1, newdata = testDF, type = "response")
 log.test[log.test>=0.5] <- 1
 log.test[log.test<0.5] <- 0
-
 ```
 
 # Create factor vectors
@@ -155,14 +155,11 @@ table(actual, predicted)
 
 ```{r}
 round(prop.table(table(actual, predicted),1),2)
-
 ```
 
 # a. How well did your model perform against the holdout dataset?
-The prediction of Good went down down from .90 to .87
-True positives
-
-
+The prediction of Good went down down from .90 to .87.
+This would be classified as TRUE POSITIVES - the measured proportion of actual positives that are correctly identified as such.
 
 # 5. Improved Model
 
@@ -170,7 +167,6 @@ True positives
 logit.fit1 <- glm(good~.,family=binomial,data=trainDF)
 Anova(logit.fit1)
 ```
-
 
 ```{r}
 logit.fit1 <- trainDF %>% 
@@ -247,3 +243,9 @@ logit.fit1 <- testDF %>%
   glm(good~.,family=binomial,data=.)
 Anova(logit.fit1)
 ```
+
+# What factors increase the probability that a loan will be a good investment for the bank?
+Factors that significantly increase the probability that a loan will be good are: Duration, Checking and Employment.Duration.
+
+# What factors may indicate that an individual may default on a loan or might be a bad investment for the bank?
+Factors that significantly decrease the probability that a loan will be good are those with an extremely low Chisq value: Age, Telephone, NumberExistingCredits...etc. that were systematically stripped out from the improved model.
