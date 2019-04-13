@@ -3,7 +3,7 @@ title: "Assignment 5 - Nikola Metes"
 output: html_notebook
 ---
 
-```{r}
+```{r,eval=FALSE}
 install.packages("rpart")
 install.packages("rpart.plot")
 ```
@@ -49,13 +49,15 @@ dev.off()
 ```
 
 # Describe in your own words, the root node for this decision tree.
-The first split between Checking from 0 to 200, or is less than 0. 
-The two levels 0. to 200. and None were split to the left and the
+The first split between Checking from 0 to 200, or is split to the left (less than 0). 
+The two levels 0. to 200. and None were split to the left and the less than zero to the right.
 
 # What does it mean?
-The split checking 0 to 200 has a slightly higher proportion than those who have checking
+The split checking 0 to 200, lt.0 has a slightly lower proportion of the attribute Good versus thos in the other two categories (None and gt 200) have a higher proportion of Good, even though they represent a smaller ratio of the sample.
 
 # What percent of cases in the training set are accurately identified as “Good” credit by this single decision node alone?
+The accuracy of the people on the right hand side (46%) is higher at 0.88, while the other side (54%) has only a 0.56 accuracy. 
+
 If it is Yes then it goes to a 54% Good, if it is No then it goes to a 46% Good.
 
 # How many internal nodes (not including the root node) are there in this tree?
@@ -63,3 +65,46 @@ not counting the leafs, there are 17 nodes
 
 # How many leaf nodes?
 19 leaf nodes
+
+# 2.2 Evaluate the complexity parameter and refit a pruned tree
+
+```{r}
+printcp(tree.1)
+```
+
+```{r}
+plotcp(tree.1,minline=TRUE)
+```
+
+# What value did you choose to prune your tree? Why?
+
+
+# 2.2.1 Fit a Pruned tree based on this control parameter
+
+```{r}
+# set your seed
+set.seed(737900)
+
+# fit a pruned tree to tree.2
+tree.2 <- prune(tree.1,cp=0.0192308)
+```
+
+```{r}
+rpart.plot(tree.2, box.palette="RdBu", shadow.col="gray", nn=TRUE)
+```
+
+# Summarize and describe the pruned tree model. Explain how the tree is making its decisions as if you were descibing the model to a business stakeholder. Be sure to explain each decision node.
+0.0042735 is the lowest cross-validated error, added the next column, then took the result and chose the row that corresponds
+1SE rule, stx should be called colum SE
+
+# 2.3 Model Performance and Holdout Analysis
+# Training Set Confusion Matrix: Full Tree
+
+```{r}
+table(trainDF[,"Class"],predict(tree.1,type="class"))
+```
+
+```{r}
+round(prop.table(table(trainDF[,"Class"],predict(tree.1,type="class")),1),2)
+```
+
