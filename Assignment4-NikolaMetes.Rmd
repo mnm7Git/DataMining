@@ -1,18 +1,12 @@
 ---
 title: 'Assignment #4  - Nikola Metes'
 output:
+  pdf_document: default
+  html_notebook: default
   html_document:
     df_print: paged
-  html_notebook: default
-  pdf_document: default
 ---
 
-```{r,include=FALSE}
-install.packages("tidyverse")
-install.packages("car")
-install.packages("pROC")
-installed.packages("contrib.url")
-```
 ```{r}
 library(tidyverse)
 library(car)
@@ -21,7 +15,7 @@ library(pROC)
 ```{r}
 # load the data set
 GermanCredit <- read_csv(file.path("Data", "GermanCredit_modified_SP19_001.csv")) %>% 
-  mutate(good=if_else(Class=="Good",1,0)) %>% 
+  mutate(good=factor(if_else(Class=="Good",1,0),levels = c(0,1), labels = c("Bad", "Good"))) %>% 
   select(-Class)
 ```
 
@@ -48,7 +42,7 @@ MISSING CODE
 
 ```{r}
 str(GermanCredit)
-trainDF %>% select(Class) %>% table()
+trainDF %>% select(good) %>% table()
 ```
 
 ```{r}
